@@ -27,9 +27,9 @@ Louis ist Azubi zum Fachinformatiker für Systemintegration in Hamburg (Aug. 202
 
 ## Capabilities and Constraints
 
-- Statische Seite. `index.php` ist nur ein Template mit Datenblock oben; eine GitHub Action rendert es zu `index.html` und veröffentlicht über GitHub Pages (Domain louis-lastella.dev via CNAME). Nur `css`, `js`, `assets`, `favicon.svg`, `CNAME` werden mit ausgeliefert.
-- Kein Build-System, kein Framework, kein Backend.
-- Inhalte pflegt Louis im Datenblock von `index.php`; neue Projekte müssen dort ohne Design-Arbeit ergänzt werden können.
+- Statische Seite mit Astro und TypeScript. Eine GitHub Action prüft die Typen (`astro check`), baut nach `dist/` und veröffentlicht über GitHub Pages (Domain louis-lastella.dev via `public/CNAME`). Im Browser kommt nur HTML, CSS und ein kleines Inline-Skript an.
+- Kein Backend. JavaScript im Browser nur, wo es wirklich gebraucht wird.
+- Inhalte pflegt Louis in `src/data.ts`; neue Projekte müssen dort ohne Design-Arbeit ergänzt werden können. Seite: `src/pages/index.astro`, Styles: `src/styles/global.css`, statische Dateien: `public/`.
 - Schriften und Assets sollen lokal ausgeliefert werden (DSGVO, keine Google-Server).
 
 ## Brand Commitments
@@ -41,9 +41,9 @@ Louis ist Azubi zum Fachinformatiker für Systemintegration in Hamburg (Aug. 202
 
 ## Evidence on Hand
 
-- Projekte mit Beschreibungen im Datenblock von `index.php`: Synology Chat MCP (auch in der offiziellen MCP Registry), Berichtsheft MCP, Usagecast, Discord-Bots (selbst gehostet mit Coolify), Portfolio-Website. Brokkoli Tracker gibt es nicht mehr.
+- Projekte mit Beschreibungen in `src/data.ts`: Synology Chat MCP (auch in der offiziellen MCP Registry), Berichtsheft MCP, Usagecast, Discord-Bots (selbst gehostet mit Coolify), Portfolio-Website. Brokkoli Tracker gibt es nicht mehr.
 - Öffentliche Repos: synology-chat-mcp, berichtsheft-mcp, usagecast, louis-lastella.dev.
-- Die alten Projektbilder (`assets/images/projects/`) sind KI-Renderings, keine echten Screenshots, und werden nicht mehr verwendet. Neue Projektbilder nur als echte Screenshots.
+- Die alten Projektbilder (früher `assets/images/projects/`, jetzt `public/assets/images/projects/`) sind KI-Renderings, keine echten Screenshots, und werden nicht mehr verwendet. Neue Projektbilder nur als echte Screenshots.
 - Nicht vorhanden und nicht erfinden: Referenzen, Kundenstimmen, Zahlen zu Nutzern oder Stars, Zertifikate, Prozent-Skills.
 
 ## Product Principles

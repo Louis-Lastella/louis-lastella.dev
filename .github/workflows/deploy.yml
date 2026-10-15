@@ -1,6 +1,6 @@
 name: Deploy
 
-# index.php is only a template: render it to static HTML and publish to GitHub Pages.
+# Astro prüft die Typen, baut statisches HTML und veröffentlicht es über GitHub Pages.
 on:
   push:
     branches: [main]
@@ -16,18 +16,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: withastro/action@v6
+
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v7
-      - name: Render
-        run: |
-          mkdir _site
-          php index.php > _site/index.html
-          cp -r css js assets favicon.svg CNAME _site/
-      - uses: actions/upload-pages-artifact@v5
       - id: deploy
         uses: actions/deploy-pages@v5
