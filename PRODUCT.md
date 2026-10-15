@@ -29,7 +29,8 @@ Louis ist Azubi zum Fachinformatiker für Systemintegration in Hamburg (Aug. 202
 
 - Statische Seite mit Astro und TypeScript. Eine GitHub Action prüft die Typen (`astro check`), baut nach `dist/` und veröffentlicht über GitHub Pages (Domain louis-lastella.dev via `public/CNAME`). Im Browser kommt nur HTML, CSS und ein kleines Inline-Skript an.
 - Kein Backend. JavaScript im Browser nur, wo es wirklich gebraucht wird.
-- Inhalte pflegt Louis in `src/data.ts`; neue Projekte müssen dort ohne Design-Arbeit ergänzt werden können. Seite: `src/pages/index.astro`, Styles: `src/styles/global.css`, statische Dateien: `public/`.
+- Inhalte pflegt Louis in `src/data.ts` (zweisprachig, `{ de, en }`); neue Projekte müssen dort ohne Design-Arbeit ergänzt werden können. Seite: `src/components/Page.astro` (gerendert als `/` und `/en/`), Lebenslauf: `src/pages/lebenslauf.astro` (wird beim Deploy zu `/lebenslauf.pdf` gedruckt), Styles: `src/styles/global.css` + `fonts.css`, statische Dateien: `public/`.
+- Beim Build holt die Seite das letzte Push-Datum der GitHub-Repos ("Aktualisiert <Monat>"); montags baut die Action neu.
 - Schriften und Assets sollen lokal ausgeliefert werden (DSGVO, keine Google-Server).
 
 ## Brand Commitments
@@ -41,8 +42,9 @@ Louis ist Azubi zum Fachinformatiker für Systemintegration in Hamburg (Aug. 202
 
 ## Evidence on Hand
 
-- Projekte mit Beschreibungen in `src/data.ts`: Synology Chat MCP (auch in der offiziellen MCP Registry), Berichtsheft MCP, Usagecast, Discord-Bots (selbst gehostet mit Coolify), Portfolio-Website. Brokkoli Tracker gibt es nicht mehr.
-- Öffentliche Repos: synology-chat-mcp, berichtsheft-mcp, usagecast, louis-lastella.dev.
+- Projekte mit Beschreibungen in `src/data.ts`: Synology Chat MCP (auch in der offiziellen MCP Registry), Berichtsheft MCP, Usagecast, Homelab, Discord-Bots (selbst gehostet mit Coolify), Vinylon, Jellyfin Discord RPC, Claudios MC Mod, Portfolio-Website. Brokkoli Tracker gibt es nicht mehr. Fumata (mit Mia) steht bewusst nicht auf der Seite, nur mit Louis' OK.
+- Öffentliche Repos: synology-chat-mcp, berichtsheft-mcp, usagecast, louis-lastella.dev. Private Projekte stehen ohne Link da.
+- Echte Screenshots: Usagecast (Dark Mode, `public/assets/images/projects/usagecast.webp`). Vorschaubilder für Links: `public/assets/images/og-de.png` / `og-en.png`.
 - Die alten Projektbilder (früher `assets/images/projects/`, jetzt `public/assets/images/projects/`) sind KI-Renderings, keine echten Screenshots, und werden nicht mehr verwendet. Neue Projektbilder nur als echte Screenshots.
 - Nicht vorhanden und nicht erfinden: Referenzen, Kundenstimmen, Zahlen zu Nutzern oder Stars, Zertifikate, Prozent-Skills.
 

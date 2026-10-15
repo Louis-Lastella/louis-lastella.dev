@@ -1,0 +1,305 @@
+---
+import { existsSync } from "node:fs";
+import "../styles/global.css";
+import {
+  type Lang, type Text, name, fullName, initials, city, email, yearsExp, photo, cvPdf, socials,
+  now, skills, experience, projects, marqueeItems, typedWords, ui,
+} from "../data";
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+const tx = (text: Text) => text[lang];
+const other: Lang = lang === "de" ? "en" : "de";
+const pathFor = (l: Lang) => (l === "de" ? "/" : "/en/");
+
+// Bilder liegen unter public/. Ein falscher Dateiname bricht den Build ab statt still ein kaputtes Bild zu zeigen.
+const publicFile = (path: string) => {
+  if (!existsSync(`public${path}`)) throw new Error(`Bild fehlt: public${path}`);
+  return path;
+};
+const projectImage = (file?: string) => (file ? publicFile(`/assets/images/projects/${file}`) : "");
+const linkLabel = (url: string) => (url.includes("github.com") ? t.projects.repo : t.projects.site);
+const year = new Date().getFullYear();
+
+// "Aktualisiert <Monat>" für GitHub-Repos, beim Build geholt. Fehlt die API, fehlt nur das Datum, der Build läuft weiter.
+// ponytail: pushed_at zählt jeden Push (auch Branches), reicht für "lebt das Projekt"
+const token = process.env.GITHUB_TOKEN;
+const monthFmt = new Intl.DateTimeFormat(lang === "de" ? "de-DE" : "en-GB", { month: "short", year: "numeric" });
+const repoUpdated = async (url?: string) => {
+  const repo = url?.match(/github\.com\/([^/]+\/[^/#?]+)/)?.[1];
+  if (!repo) return undefined;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+    if (!res.ok) return undefined;
+    const pushed = (await res.json()).pushed_at;
+    return pushed ? monthFmt.format(new Date(pushed)) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+const updated = await Promise.all(projects.map((p) => repoUpdated(p.url)));
+
+const site = Astro.site!;
+const ogImage = new URL(`/assets/images/og-${lang}.png`, site).href;
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: fullName,
+  url: site.href,
+  email: `mailto:${email}`,
+  jobTitle: lang === "de" ? "Auszubildender Fachinformatiker für Systemintegration" : "IT systems integration apprentice",
+  address: { "@type": "PostalAddress", addressLocality: "Hamburg", addressCountry: "DE" },
+  sameAs: [socials.github],
+};
+---
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{t.title}</title>
+<meta name="description" content={t.description}>
+<link rel="canonical" href={new URL(pathFor(lang), site).href}>
+<link rel="alternate" hreflang="de" href={new URL("/", site).href}>
+<link rel="alternate" hreflang="en" href={new URL("/en/", site).href}>
+<link rel="alternate" hreflang="x-default" href={new URL("/", site).href}>
+<meta property="og:title" content={t.title}>
+<meta property="og:description" content={t.description}>
+<meta property="og:type" content="profile">
+<meta property="og:url" content={new URL(pathFor(lang), site).href}>
+<meta property="og:locale" content={lang === "de" ? "de_DE" : "en_US"}>
+<meta property="og:image" content={ogImage}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content={`${fullName} — ${t.title.split(" — ")[1]}`}>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preload" href="/assets/fonts/bebas-neue-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script is:inline type="application/ld+json" set:html={JSON.stringify(person)} />
+<script is:inline>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">{t.skip}</a>
+
+<nav id="navbar">
+  <a href="#" class="nav-logo" aria-label={t.toTop}>{name[0]}<span>.</span></a>
+  <ul class="nav-links">
+    <li class="nav-extra"><a href="#about">{t.nav.about}</a></li>
+    <li class="nav-extra"><a href="#skills">{t.nav.skills}</a></li>
+    <li class="nav-extra"><a href="#experience">{t.nav.experience}</a></li>
+    <li><a href="#projects">{t.nav.projects}</a></li>
+    <li><a href="#contact">{t.nav.contact}</a></li>
+    <li><a href={pathFor(other)} class="nav-lang" hreflang={other} lang={other} aria-label={t.langSwitch.label}>{t.langSwitch.short}</a></li>
+  </ul>
+</nav>
+
+<main id="main">
+
+<section class="hero" id="home">
+  <h1 class="hero-headline">
+    <span class="line">{t.hero.before}</span>
+    <span class="line typed" id="typedEl" aria-hidden="true" data-words={JSON.stringify(typedWords[lang])}>{typedWords[lang][0]}</span>
+    <span class="sr-only">{typedWords[lang][0]}</span>
+    {t.hero.after.map((line) => <span class="line">{line}</span>)}
+  </h1>
+  <p class="hero-sub">{t.hero.sub}</p>
+  <div class="hero-actions">
+    <a href="#projects" class="btn-primary">{t.hero.projects}</a>
+    <a href="#contact" class="btn-ghost">
+      {t.hero.contact}
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    {[...marqueeItems, ...marqueeItems].map((item) => <span class="marquee-item">{item}</span>)}
+  </div>
+</div>
+
+<section id="about">
+  <div class="about">
+    <figure class="about-visual" data-reveal>
+      <div class="about-frame">
+        {photo
+          ? <img src={publicFile(photo)} alt={t.about.photoAlt} width="640" height="640">
+          : <div class="about-initials" aria-hidden="true">{initials}</div>}
+      </div>
+      <div class="about-badge">{t.about.badge[0]}<br>{t.about.badge[1]}</div>
+    </figure>
+    <div class="about-text">
+      <h2 class="section-title" data-reveal>{t.about.title}</h2>
+      {t.about.text.map((p) => <p>{p}</p>)}
+      <dl class="about-stats">
+        <div class="stat" data-reveal><dt>{t.about.stats.years}</dt><dd>{yearsExp}+</dd></div>
+        <div class="stat" data-reveal><dt>{t.about.stats.projects}</dt><dd>{projects.length}</dd></div>
+        <div class="stat" data-reveal><dt>{t.about.stats.graduation}</dt><dd>2028</dd></div>
+      </dl>
+      <div class="now" data-reveal>
+        <h3 class="now-title">{t.now.title} <span>{t.now.updated} {tx(now.updated)}</span></h3>
+        <ul class="now-list">
+          {now.items.map((item) => <li>{tx(item)}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <h2 class="section-title" data-reveal>{t.skillsTitle}</h2>
+  <div class="skills-grid">
+    {skills.map((skill) => (
+      <div class="skill" data-reveal>
+        <h3>{tx(skill.title)}</h3>
+        <p>{tx(skill.desc)}</p>
+        <ul class="skill-list">
+          {skill.items.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>
+
+<section id="experience">
+  <h2 class="section-title" data-reveal>{t.experienceTitle}</h2>
+  <ol class="timeline" data-reveal>
+    {experience.map((e, i) => (
+      <li class:list={["timeline-entry", i % 2 === 0 ? "left" : "right"]} data-reveal>
+        <span class="timeline-dates">{tx(e.dates)}</span>
+        <h3 class="timeline-role">{tx(e.role)}</h3>
+        <span class="timeline-company">{tx(e.company)}</span>
+        <p class="timeline-desc">{tx(e.desc)}</p>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<section id="projects">
+  <h2 class="section-title" data-reveal>{t.projects.title}</h2>
+  <div class="projects-grid">
+    {projects.map((p, i) => {
+      const img = projectImage(p.image);
+      return (
+        <article class:list={["project", { "has-link": p.url, wide: p.wide }]} data-reveal>
+          {img && <img class="project-image" src={img} alt="" loading="lazy">}
+          <h3>
+            {p.url
+              ? <a href={p.url} target="_blank" rel="noopener noreferrer">{p.title}</a>
+              : p.title}
+          </h3>
+          <div class="project-body">
+            <p class="project-desc">{tx(p.desc)}</p>
+            <p class="project-learned"><span>{t.projects.learned}</span> {tx(p.learned)}</p>
+            {p.install && (
+              <div class="project-install">
+                <span class="project-install-label">{t.projects.tryIt}</span>
+                <code>{p.install}</code>
+              </div>
+            )}
+            {p.stack && (
+              <dl class="stack">
+                {p.stack.map((s) => (
+                  <div class="stack-row">
+                    <dt>{tx(s.layer)}</dt>
+                    <dd>{s.items.map((item) => <span>{item}</span>)}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {p.links && (
+              <ul class="project-links">
+                {p.links.map((l) => (
+                  <li><a href={l.url} target="_blank" rel="noopener noreferrer">
+                    {tx(l.label)}
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a></li>
+                ))}
+              </ul>
+            )}
+            <div class="project-meta">
+              <ul class="project-tags">
+                {p.tags.map((tag) => <li class="tag">{tag}</li>)}
+              </ul>
+              <span class="project-side">
+                {updated[i] && <span class="project-updated">{t.projects.updated} {updated[i]}</span>}
+                {p.url && <span class="project-link" aria-hidden="true">{linkLabel(p.url)} <span class="arrow">→</span></span>}
+              </span>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <h2 data-reveal><span class="line">{t.contact.title[0]}</span> <span class="line">{t.contact.title[1]}</span></h2>
+  <p>{t.contact.text}</p>
+  <div class="contact-links">
+    <a href={`mailto:${email}`} class="contact-link" data-reveal>{t.contact.email}</a>
+    <a href={cvPdf} class="contact-link" data-reveal hreflang="de" download="Lebenslauf-Louis-Lastella.pdf">{t.contact.cv}</a>
+    <a href={socials.github} class="contact-link" data-reveal target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href={socials.discord} class="contact-link" data-reveal target="_blank" rel="noopener noreferrer">Discord</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>© {year} {fullName}</span>
+  <a href={`mailto:${email}`}>{email}</a>
+  <span>{tx(city)}</span>
+</footer>
+
+<script>
+  /* === NAV: border on scroll, underline the section in view === */
+  const nav = document.getElementById("navbar")!;
+  const navLinks = nav.querySelectorAll<HTMLAnchorElement>(".nav-links a[href^='#']");
+  const sections = [...document.querySelectorAll<HTMLElement>("main section[id]")];
+  const onScroll = () => {
+    nav.classList.toggle("scrolled", window.scrollY > 40);
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    const current = atBottom ? sections.at(-1) : sections.findLast((s) => s.getBoundingClientRect().top < window.innerHeight * 0.4);
+    navLinks.forEach((a) => a.classList.toggle("active", a.hash === `#${current?.id}`));
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* === TYPED WORD (starts from the server-rendered first word) === */
+  const typed = document.getElementById("typedEl");
+  const words: string[] = JSON.parse(typed?.dataset.words ?? "[]");
+  if (typed && words.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    let wi = 0, ci = words[0].length, deleting = true;
+    const step = (): void => {
+      const word = words[wi];
+      typed.textContent = word.slice(0, deleting ? --ci : ++ci);
+      if (!deleting && ci === word.length) { deleting = true; setTimeout(step, 2200); return; }
+      if (deleting && ci === 0) { deleting = false; wi = (wi + 1) % words.length; setTimeout(step, 300); return; }
+      setTimeout(step, deleting ? 55 : 105);
+    };
+    setTimeout(step, 2600);
+  }
+
+  /* === SCROLL REVEAL: [data-reveal] gets .in once on screen; elements arriving together are staggered via --d === */
+  const reveal = new IntersectionObserver((entries) => {
+    let n = 0;
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target as HTMLElement;
+      el.style.setProperty("--d", `${Math.min(n++, 4) * 90}ms`);
+      el.classList.add("in");
+      reveal.unobserve(el);
+    }
+  }, { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll("[data-reveal]").forEach((el) => reveal.observe(el));
+</script>
+</body>
+</html>

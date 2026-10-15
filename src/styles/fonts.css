@@ -1,0 +1,15 @@
+/* === FONTS (self-hosted, no Google requests). Shared by the portfolio and the CV. === */
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('/assets/fonts/bebas-neue-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/assets/fonts/dm-sans-latin.woff2') format('woff2');
+  font-weight: 300 600;
+  font-style: normal;
+  font-display: swap;
+}
