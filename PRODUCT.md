@@ -17,7 +17,7 @@ Persönliches Portfolio von Louis: zeigen, wer er ist, was er baut und wie man i
 
 ## Positioning
 
-Louis ist Azubi zum Fachinformatiker für Systemintegration in Hamburg (Aug. 2025 bis 2028). Systemintegration und Web stehen gleichberechtigt nebeneinander. Er baut Tools, die ihm Alltag und Ausbildung abnehmen, und hostet das meiste selbst (Coolify, eigene Server). Seine Projekte sind echte, laufende Werkzeuge, keine Übungsaufgaben.
+Louis ist Azubi zum Fachinformatiker für Systemintegration beim Berufsbildungswerk Hamburg (Aug. 2025 bis 2028). Systemintegration und Web stehen gleichberechtigt nebeneinander. Er baut Tools, die ihm Alltag und Ausbildung abnehmen, und hostet das meiste selbst (Coolify, eigene Server). Seine Projekte sind echte, laufende Werkzeuge, keine Übungsaufgaben.
 
 ## Operating Context
 
@@ -42,9 +42,11 @@ Louis ist Azubi zum Fachinformatiker für Systemintegration in Hamburg (Aug. 202
 
 ## Evidence on Hand
 
-- Projekte mit Beschreibungen in `src/data.ts`: Synology Chat MCP (auch in der offiziellen MCP Registry), Berichtsheft MCP, Usagecast, Homelab, Discord-Bots (selbst gehostet mit Coolify), Vinylon, Jellyfin Discord RPC, Claudios MC Mod, Portfolio-Website. Brokkoli Tracker gibt es nicht mehr. Fumata (mit Mia) steht bewusst nicht auf der Seite, nur mit Louis' OK.
+- Projekte mit Beschreibungen in `src/data.ts`: Synology Chat MCP (auch in der offiziellen MCP Registry), Berichtsheft MCP, Fumata (iOS-App mit Mia, öffentlich als "Know your habits", Website fumata.app), Homelab, Discord-Bots (selbst gehostet mit Coolify), Vinylon, Usagecast, Jellyfin Discord RPC, Claudios MC Mod, Portfolio-Website. Brokkoli Tracker gibt es nicht mehr.
+- Ausbildung beim Berufsbildungswerk Hamburg (Aug. 2025 bis 2028).
+- Der Proxmox-Host gehört Mia: Proxmox und LXC werden auf der Seite nicht genannt, das Homelab wird über Coolify, Docker und Linux beschrieben.
 - Öffentliche Repos: synology-chat-mcp, berichtsheft-mcp, usagecast, louis-lastella.dev. Private Projekte stehen ohne Link da.
-- Echte Screenshots: Usagecast (Dark Mode, `public/assets/images/projects/usagecast.webp`). Vorschaubilder für Links: `public/assets/images/og-de.png` / `og-en.png`.
+- Echte Screenshots: Usagecast (Dark Mode, `usagecast.webp`), Coolify-Übersicht mit allen Diensten (`coolify.webp`), beide in `public/assets/images/projects/`. Berichtsheft braucht kein Bild. Vorschaubilder für Links: `public/assets/images/og-de.png` / `og-en.png`.
 - Die alten Projektbilder (früher `assets/images/projects/`, jetzt `public/assets/images/projects/`) sind KI-Renderings, keine echten Screenshots, und werden nicht mehr verwendet. Neue Projektbilder nur als echte Screenshots.
 - Nicht vorhanden und nicht erfinden: Referenzen, Kundenstimmen, Zahlen zu Nutzern oder Stars, Zertifikate, Prozent-Skills.
 

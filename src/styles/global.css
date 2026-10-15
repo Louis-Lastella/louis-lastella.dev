@@ -661,6 +661,8 @@ section + section:not(.contact) { padding-top: 0; }
   align-items: start;
 }
 .project.wide h3 { font-size: clamp(2.4rem, 4.4vw, 3.6rem); }
+/* screenshots in wide cards keep their own proportions, dashboards must not lose columns */
+.project.wide .project-image { aspect-ratio: auto; }
 /* wide card with a screenshot: title and image on the left, text on the right */
 @media (min-width: 961px) {
   .project.wide:has(.project-image) h3 { grid-column: 1; grid-row: 1; }
