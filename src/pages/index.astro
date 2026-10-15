@@ -73,7 +73,7 @@ const year = new Date().getFullYear();
 
 <section id="about">
   <div class="about">
-    <figure class="about-visual">
+    <figure class="about-visual" data-reveal>
       <div class="about-frame">
         {photo
           ? <img src={publicFile(photo)} alt={`${name} als Kind`} width="640" height="640">
@@ -82,23 +82,23 @@ const year = new Date().getFullYear();
       <div class="about-badge">In<br>Ausbildung</div>
     </figure>
     <div class="about-text">
-      <h2 class="section-title">Hallo, ich bin Louis.</h2>
+      <h2 class="section-title" data-reveal>Hallo, ich bin Louis.</h2>
       <p>Ich bin 18, wohne in Hamburg und mache gerade meine Ausbildung zum Fachinformatiker für IT-Systemintegration. Technik begeistert mich schon lange — Netzwerke, Hardware, Software, wie alles zusammenhängt.</p>
       <p>Seit 2025 lerne ich auch Web Design und Frontend-Entwicklung. Diese Seite hier ist mein erstes eigenes Projekt — noch lange nicht fertig, aber ich arbeite dran.</p>
       <dl class="about-stats">
-        <div class="stat"><dt>Jahre in der IT</dt><dd>{yearsExp}+</dd></div>
-        <div class="stat"><dt>Eigene Projekte</dt><dd>{projects.length}</dd></div>
-        <div class="stat"><dt>Abschluss</dt><dd>2028</dd></div>
+        <div class="stat" data-reveal><dt>Jahre in der IT</dt><dd>{yearsExp}+</dd></div>
+        <div class="stat" data-reveal><dt>Eigene Projekte</dt><dd>{projects.length}</dd></div>
+        <div class="stat" data-reveal><dt>Abschluss</dt><dd>2028</dd></div>
       </dl>
     </div>
   </div>
 </section>
 
 <section id="skills">
-  <h2 class="section-title">Was ich lerne &amp; kann</h2>
+  <h2 class="section-title" data-reveal>Was ich lerne &amp; kann</h2>
   <div class="skills-grid">
     {skills.map((skill) => (
-      <div class="skill">
+      <div class="skill" data-reveal>
         <h3>{skill.title}</h3>
         <p>{skill.desc}</p>
         <ul class="skill-list">
@@ -110,10 +110,10 @@ const year = new Date().getFullYear();
 </section>
 
 <section id="experience">
-  <h2 class="section-title">Mein Weg</h2>
-  <ol class="timeline">
+  <h2 class="section-title" data-reveal>Mein Weg</h2>
+  <ol class="timeline" data-reveal>
     {experience.map((e, i) => (
-      <li class:list={["timeline-entry", i % 2 === 0 ? "left" : "right"]}>
+      <li class:list={["timeline-entry", i % 2 === 0 ? "left" : "right"]} data-reveal>
         <span class="timeline-dates">{e.dates}</span>
         <h3 class="timeline-role">{e.role}</h3>
         <span class="timeline-company">{e.company}</span>
@@ -124,12 +124,12 @@ const year = new Date().getFullYear();
 </section>
 
 <section id="projects">
-  <h2 class="section-title">Projekte</h2>
+  <h2 class="section-title" data-reveal>Projekte</h2>
   <div class="projects-grid">
     {projects.map((p) => {
       const img = projectImage(p.image);
       return (
-        <article class:list={["project", { "has-link": p.url }]}>
+        <article class:list={["project", { "has-link": p.url }]} data-reveal>
           {img && <img class="project-image" src={img} alt="" loading="lazy">}
           <h3>
             {p.url
@@ -152,12 +152,12 @@ const year = new Date().getFullYear();
 </section>
 
 <section class="contact" id="contact">
-  <h2>Meld<br>dich.</h2>
+  <h2 data-reveal><span class="line">Meld</span> <span class="line">dich.</span></h2>
   <p>Ich freue mich über jede Nachricht — egal ob Frage, Austausch oder einfach Hallo.</p>
   <div class="contact-links">
-    <a href={`mailto:${email}`} class="contact-link">E-Mail schreiben</a>
-    <a href={socials.github} class="contact-link" target="_blank" rel="noopener noreferrer">GitHub</a>
-    <a href={socials.discord} class="contact-link" target="_blank" rel="noopener noreferrer">Discord</a>
+    <a href={`mailto:${email}`} class="contact-link" data-reveal>E-Mail schreiben</a>
+    <a href={socials.github} class="contact-link" data-reveal target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href={socials.discord} class="contact-link" data-reveal target="_blank" rel="noopener noreferrer">Discord</a>
   </div>
 </section>
 
@@ -170,9 +170,16 @@ const year = new Date().getFullYear();
 </footer>
 
 <script>
-  /* === NAV BORDER ON SCROLL === */
+  /* === NAV: border on scroll, underline the section in view === */
   const nav = document.getElementById("navbar")!;
-  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 40);
+  const navLinks = nav.querySelectorAll<HTMLAnchorElement>(".nav-links a");
+  const sections = [...document.querySelectorAll<HTMLElement>("main section[id]")];
+  const onScroll = () => {
+    nav.classList.toggle("scrolled", window.scrollY > 40);
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    const current = atBottom ? sections.at(-1) : sections.findLast((s) => s.getBoundingClientRect().top < window.innerHeight * 0.4);
+    navLinks.forEach((a) => a.classList.toggle("active", a.hash === `#${current?.id}`));
+  };
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
@@ -191,13 +198,18 @@ const year = new Date().getFullYear();
     setTimeout(step, 2600);
   }
 
-  /* === TIMELINE LINE DRAW === */
-  const timeline = document.querySelector(".timeline");
-  if (timeline) {
-    new IntersectionObserver(([entry], io) => {
-      if (entry.isIntersecting) { timeline.classList.add("visible"); io.disconnect(); }
-    }, { threshold: 0.15 }).observe(timeline);
-  }
+  /* === SCROLL REVEAL: [data-reveal] gets .in once on screen; elements arriving together are staggered via --d === */
+  const reveal = new IntersectionObserver((entries) => {
+    let n = 0;
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target as HTMLElement;
+      el.style.setProperty("--d", `${Math.min(n++, 4) * 90}ms`);
+      el.classList.add("in");
+      reveal.unobserve(el);
+    }
+  }, { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll("[data-reveal]").forEach((el) => reveal.observe(el));
 </script>
 </body>
 </html>
