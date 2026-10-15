@@ -253,6 +253,8 @@ section + section:not(.contact) { padding-top: 0; }
 }
 
 /* === ABOUT === */
+/* the badge starts scaled up for its stamp animation; clip it so it never widens the page on phones */
+#about { overflow-x: clip; }
 .about {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
